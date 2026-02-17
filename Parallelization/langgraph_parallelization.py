@@ -16,7 +16,7 @@ load_dotenv()
 
 
 # ==================== STEP 1: Define State ====================
-class WorkflowState(TypedDict):
+class ParallelState(TypedDict):
     """State that gets passed between nodes"""
     original_text: str
     summary: bool
@@ -27,7 +27,7 @@ class WorkflowState(TypedDict):
 
 
 
-def greet_hello_node(state: WorkflowState) -> WorkflowState:
+def greet_hello_node(state: ParallelState) -> ParallelState:
     print("Hello from greet_hello_node")
     print(f"Here is my workflow state {state}")
 
@@ -37,7 +37,7 @@ def greet_hello_node(state: WorkflowState) -> WorkflowState:
 
 
 
-def decision_maker(state: WorkflowState) -> str:
+def decision_maker(state: ParallelState) -> str:
     print("I'm inside a decision maker state")
     if state["decider"] > 0.5:
         return "summarize"
@@ -65,7 +65,7 @@ def summarize_node(state: str) -> str:
     }
 
 
-def translate_node(state: str) -> WorkflowState:
+def translate_node(state: str) -> ParallelState:
     """Node 2: Translate the summary to French"""
     print("🌍 Step 2: Translating to French...")
     
@@ -84,7 +84,7 @@ def translate_node(state: str) -> WorkflowState:
     }
 
 
-def print_hello_world(state: WorkflowState) -> WorkflowState:
+def print_hello_world(state: ParallelState) -> ParallelState:
     print("Hello world man")
     print("state['result_text']", state["result_text"])
 
@@ -96,7 +96,7 @@ def create_workflow():
     """Create and compile the LangGraph workflow"""
     
     # Initialize the graph
-    workflow = StateGraph(WorkflowState)
+    workflow = StateGraph(ParallelState)
     
     # Add nodes
     workflow.add_node("Distributor Node", greet_hello_node)
@@ -130,7 +130,7 @@ def main():
         f.write(app.get_graph().draw_mermaid_png())
     
     # Initial state
-    initial_state = WorkflowState({
+    initial_state = ParallelState({
         "original_text": "Large language models are powerful AI systems trained on vast amounts of text data. They can generate human-like text, translate languages, write different kinds of creative content, and answer your questions in an informative way.",
         "summary": False,
         "translation": False,

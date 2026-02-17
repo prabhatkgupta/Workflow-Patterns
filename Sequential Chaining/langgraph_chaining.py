@@ -1,7 +1,3 @@
-"""
-LangGraph Implementation - Multi-Step AI Workflow
-Converts sequential Gemini calls into a LangGraph state machine
-"""
 
 from dotenv import load_dotenv
 from typing import TypedDict, Annotated
@@ -11,7 +7,7 @@ load_dotenv()
 
 
 # ==================== STEP 1: Define State ====================
-class WorkflowState(TypedDict):
+class ChainingState(TypedDict):
     """State that gets passed between nodes"""
     original_text: str
     summary: str
@@ -40,7 +36,7 @@ def summarize_node(state: str) -> str:
     }
 
 
-def translate_node(state: str) -> WorkflowState:
+def translate_node(state: str) -> ChainingState:
     """Node 2: Translate the summary to French"""
     print("🌍 Step 2: Translating to French...")
     
@@ -66,7 +62,7 @@ def create_workflow():
     """Create and compile the LangGraph workflow"""
     
     # Initialize the graph
-    workflow = StateGraph(WorkflowState)
+    workflow = StateGraph(ChainingState)
     
     # Add nodes
     workflow.add_node("LLM Node 1", summarize_node)
@@ -95,7 +91,7 @@ def main():
         f.write(app.get_graph().draw_mermaid_png())
     
     # Initial state
-    initial_state = WorkflowState({
+    initial_state = ChainingState({
         "original_text": "Large language models are powerful AI systems trained on vast amounts of text data. They can generate human-like text, translate languages, write different kinds of creative content, and answer your questions in an informative way.",
         "summary": "",
         "translation": "",
